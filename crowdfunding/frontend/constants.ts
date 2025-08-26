@@ -1,4 +1,4 @@
-export const NETWORK = import.meta.env.VITE_APP_NETWORK ?? "devnet";
+export const NETWORK = import.meta.env.VITE_APP_NETWORK ?? "testnet";
 // export const MODULE_ADDRESS = import.meta.env.VITE_MODULE_ADDRESS;
 // export const MODULE_ADDRESS = "0x1d734c9c4abae4da83a98edffd8122a70bc32ea51dd80c6b30a3659d9d03d18d";
 // export const MODULE_ADDRESS = "0x71206a7ffff43cbf3262790b2f44d75207aef685cf17730d4ea70f9742a77258";
