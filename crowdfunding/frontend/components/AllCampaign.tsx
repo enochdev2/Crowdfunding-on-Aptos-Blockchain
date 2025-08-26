@@ -126,7 +126,7 @@ if (loading) {
       <div className=" absolute w-full bg-black/30 h-full"></div>
       <div className="max-w-full mx-auto px-6 py-6 relative z-10">
         <h2 className=" bg-blac py-3 text-4xl font-extrabold text-center text-[#f3c0c0]  drop-shadow-lg">
-          All <span className="text-[#7a81d8] text-shadow-sm">Campaigns</span>
+          Popular <span className="text-[#7a81d8] text-shadow-sm">Campaigns</span>
         </h2>
         <section className="flex flex-wrap gap-6 p-6">
           {campaigns.map((c, i) => (
