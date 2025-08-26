@@ -149,9 +149,9 @@ const Hero = () => {
 
       {/* Popup Modal */}
       <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
+        <div className="fixed inset-0 bg-black/40 backdrop-blu" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Dialog.Panel className="mx-auto w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+          <Dialog.Panel className="mx-auto w-full max-w-lg rounded-2xl bg-fuchsia p-6 shadow-xl">
             <Dialog.Title className="text-2xl font-bold text-gray-900">Create New Campaign</Dialog.Title>
             <form className="mt-4 space-y-4">
               <input
