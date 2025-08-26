@@ -2,12 +2,11 @@ module crowdfund::crowdfundings {
     use aptos_framework::account;
     use std::signer;
     use std::vector;
+    use std::string::{ String};
     use aptos_framework::event;
     use aptos_std::table::{Self, Table};
     use aptos_framework::aptos_coin::AptosCoin;
-    // use aptos_framework::coin;
     use aptos_framework::coin::{Self, Coin};
-    use aptos_framework::aptos_account;
 
     /// Errors
     const E_NOT_INITIALIZED: u64 = 1;
@@ -20,25 +19,37 @@ module crowdfund::crowdfundings {
     /// Errors
     const E_INSUFFICIENT_FUNDS: u64 = 5;
 
+    // Struct to track contributors
+    public struct Contribution has copy, drop, store {
+        wallet_address: address,
+        amount: u64,
+    }
+
     // Campaign structure (adding vault_balance)
     struct Campaign has store {
+        name: String,
+        description: String,
         creator: address,
+        crowdfund_type: u8, // 0 for grant, 1 for ICO
         goal_amount: u64,
         current_amount: u64,
+        deadline: u64,
         vault: Coin<AptosCoin>,
         vault_balance: u64,   // Holding funds until goal is met
         active: bool,
+        is_successful: bool,
         contributors: vector<address>,
-        // contributions: Table<address, u64>, //has copy, drop
+        contributions: Table<address, Contribution>, //has copy, drop
     }
 
     struct TokenVault has store {
-    amount: u64, // Tracks the amount of tokens in the vault
-}
+      amount: u64, // Tracks the amount of tokens in the vault
+    }
 
 
     // Global storage for campaigns
     struct CrowdfundingPlatform has key {
+        crowdfunds: vector<address>,
         campaigns: Table<address, Campaign>,
         create_campaign_events: event::EventHandle<CreateCampaignEvent>,
         contribute_events: event::EventHandle<ContributeEvent>,
@@ -59,6 +70,7 @@ module crowdfund::crowdfundings {
     // Initialize the crowdfunding platform
     public entry fun initialize(account: &signer) {
         let platform = CrowdfundingPlatform {
+            crowdfunds: vector::empty<address>(),
             campaigns: table::new(),
             create_campaign_events: account::new_event_handle<CreateCampaignEvent>(account),
             contribute_events: account::new_event_handle<ContributeEvent>(account),
@@ -67,31 +79,45 @@ module crowdfund::crowdfundings {
     }
 
     // Create a new campaign
-    public entry fun create_campaign(creator: &signer, goal_amount: u64) acquires CrowdfundingPlatform {
-        let creator_addr = signer::address_of(creator);
+    public entry fun create_campaign(
+        campaign_creator: &signer ,
+        platform_creator: address,
+        name: String,
+        description: String,
+        crowdfund_type: u8, 
+        deadline: u64,
+        goal_amount: u64,
+    ) acquires CrowdfundingPlatform {
+        let creator_addr = signer::address_of(campaign_creator);
 
         // Ensure platform is initialized
-        assert!(exists<CrowdfundingPlatform>(creator_addr), E_NOT_INITIALIZED);
+        assert!(exists<CrowdfundingPlatform>(platform_creator), E_NOT_INITIALIZED);
 
-        let platform = borrow_global_mut<CrowdfundingPlatform>(creator_addr);
+        let platform = borrow_global_mut<CrowdfundingPlatform>(platform_creator);
 
         // Ensure campaign doesn't already exist
         assert!(!table::contains(&platform.campaigns, creator_addr), E_CAMPAIGN_ALREADY_EXISTS);
 
         // Create new campaign with vault balance
         let new_campaign = Campaign {
+            name,
+            description,
             creator: creator_addr,
+            crowdfund_type,
             goal_amount,
+            deadline,
             current_amount: 0,
             vault: coin::zero<AptosCoin>(), // Initialize vault with zero balance
             vault_balance: 0,  // Funds held in vault initially
             active: true,
+            is_successful: false,
             contributors: vector::empty(),
-            // contributions: table::new(),
+            contributions: table::new(),
         };
 
         // Add campaign to platform
         table::add(&mut platform.campaigns, creator_addr, new_campaign);
+        vector::push_back(&mut platform.crowdfunds, creator_addr);
 
         // Emit event
         event::emit_event(&mut platform.create_campaign_events, 
@@ -105,15 +131,16 @@ module crowdfund::crowdfundings {
     // Contribute to a campaign (funds stored in the contract until goal is met)
     public entry fun contribute(
         contributor: &signer, 
+        platform_creator: address, 
         campaign_creator: address, 
         amount: u64
     ) acquires CrowdfundingPlatform {
         let contributor_addr = signer::address_of(contributor);
 
         // Ensure platform is initialized
-        assert!(exists<CrowdfundingPlatform>(campaign_creator), E_NOT_INITIALIZED);
+        assert!(exists<CrowdfundingPlatform>(platform_creator), E_NOT_INITIALIZED);
 
-        let platform = borrow_global_mut<CrowdfundingPlatform>(campaign_creator);
+        let platform = borrow_global_mut<CrowdfundingPlatform>(platform_creator);
 
         // Ensure campaign exists
         assert!(table::contains(&platform.campaigns, campaign_creator), E_CAMPAIGN_NOT_FOUND);
@@ -146,16 +173,16 @@ module crowdfund::crowdfundings {
         );
         // Check if goal is reached and close the campaign
         if (campaign.current_amount >= campaign.goal_amount) {
-    campaign.active = false;
-}
+            campaign.active = false;
+        }
 
     }
 
     // Withdraw funds only if goal is reached
-    public entry fun withdraw_funds<CoinType>(creator: &signer) acquires CrowdfundingPlatform {
+    public entry fun withdraw_funds<CoinType>(creator: &signer,  platform_creator: address, ) acquires CrowdfundingPlatform {
         let creator_addr = signer::address_of(creator);
-        assert!(exists<CrowdfundingPlatform>(creator_addr), E_NOT_INITIALIZED);
-        let platform = borrow_global_mut<CrowdfundingPlatform>(creator_addr);
+        assert!(exists<CrowdfundingPlatform>(platform_creator), E_NOT_INITIALIZED);
+        let platform = borrow_global_mut<CrowdfundingPlatform>(platform_creator);
         assert!(table::contains(&platform.campaigns, creator_addr), E_CAMPAIGN_NOT_FOUND);
 
         let campaign = table::borrow_mut(&mut platform.campaigns, creator_addr);
@@ -171,6 +198,32 @@ module crowdfund::crowdfundings {
         campaign.vault_balance = campaign.vault_balance - amount;
         campaign.current_amount = campaign.current_amount - amount;
     }
+
+    public fun get_crowdfund_info(
+    crowdfund: &Campaign,
+): (
+    String, // name
+    String, // description
+    address, // creator
+    u8, //Crowdfund Type
+    u64, // target amount
+    u64, // current amount
+    u64, // deadline
+    bool, // is active
+    bool, // is successful
+) {
+    (
+        crowdfund.name,
+        crowdfund.description,
+        crowdfund.creator,
+        crowdfund.crowdfund_type,
+        crowdfund.goal_amount,
+        crowdfund.current_amount,
+        crowdfund.deadline,
+        crowdfund.active,
+        crowdfund.is_successful,
+    )
+}
 
     // // Refund contributors if goal is not met
     // public entry fun refund_contributor<CoinType>(contributor: &signer, campaign_creator: address) acquires CrowdfundingPlatform {
@@ -196,17 +249,17 @@ module crowdfund::crowdfundings {
     // }
 
     // View campaign details
-    public fun view_campaign(campaign_creator: address): &Campaign acquires CrowdfundingPlatform {
-        assert!(exists<CrowdfundingPlatform>(campaign_creator), E_NOT_INITIALIZED);
+//     public fun view_campaign(campaign_creator: address): &Campaign acquires CrowdfundingPlatform {
+//         assert!(exists<CrowdfundingPlatform>(campaign_creator), E_NOT_INITIALIZED);
 
-        let platform = borrow_global<CrowdfundingPlatform>(campaign_creator);
+//         let platform = borrow_global<CrowdfundingPlatform>(campaign_creator);
 
-        assert!(table::contains(&platform.campaigns, campaign_creator), E_CAMPAIGN_NOT_FOUND);
+//         assert!(table::contains(&platform.campaigns, campaign_creator), E_CAMPAIGN_NOT_FOUND);
 
-        // *table::borrow(&platform.campaigns, campaign_creator)
-        // Instead of copying the Campaign resource, borrow it
- table::borrow(&platform.campaigns, campaign_creator)
-    }
+//         // *table::borrow(&platform.campaigns, campaign_creator)
+//         // Instead of copying the Campaign resource, borrow it
+//  table::borrow(&platform.campaigns, campaign_creator)
+//     }
 
     // Unit tests
     #[test_only]

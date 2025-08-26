@@ -9,6 +9,9 @@ module voting_app_addr::voting {
     use aptos_framework::fungible_asset::{Self, Metadata, FungibleStore};
     use aptos_framework::primary_fungible_store;
 
+// voting_app_addr = "0x1d734c9c4abae4da83a98edffd8122a70bc32ea51dd80c6b30a3659d9d03d18d"
+
+
     // ================================= Errors ================================= //
     /// Error code indicating that a live proposal already exists.
     const ERR_LIVE_PROPOSAL_ALREADY_EXISTS: u64 = 1;
@@ -378,7 +381,7 @@ module voting_app_addr::voting {
         object::generate_signer_for_extending(&borrow_global<UserStakeController>(@voting_app_addr).extend_ref)
     }
 
-    /// Construct user stake object seed
+    // Construct user stake object seed
     fun construct_user_stake_object_seed(user_addr: address): vector<u8> {
         bcs::to_bytes(&string_utils::format2(&b"{}_staker_{}", @voting_app_addr, user_addr))
     }

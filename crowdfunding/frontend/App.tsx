@@ -1,34 +1,32 @@
 // Internal Components
 import { Header } from "@/components/Header";
-import { Stake } from "./pages/Stake";
-import { TopBanner } from "./components/TopBanner";
-import { IS_DEV } from "./constants";
-import CampaignPage from "./pages/Stake/CampaignPage";
-import DonatePage from "./pages/Stake/DonatePage";
-import RefundPage from "./pages/Stake/RefundPage";
-import AdminPage from "./pages/Stake/AdminPage";
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Hero from "./components/Hero";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Footer from "./components/Footer";
+import Apps from "./components/Sect";
+import { Stake } from "./pages/Stake";
+import CampaignDetailPage from "./pages/Stake/CampaignDetailPage";
+import CampaignPage from "./pages/Stake/CampaignPage";
+import RefundPage from "./pages/Stake/RefundPage";
 
 function App() {
   return (
-    <>
-      {/* <Header />
-      <Stake /> */}
+    <div className="overflow-x-hidden">
       <BrowserRouter>
         <Header />
         <Routes>
           <Route path="/" element={<Stake />} />
           <Route path="/campaign" element={<CampaignPage />} />
-          <Route path="/campaign" element={<CampaignPage />} />
-          {/* <Route path="/donate" element={<DonatePage />} /> */}
+          <Route path="/campaign/:creator" element={<CampaignDetailPage />} />
           <Route path="/refund" element={<RefundPage />} />
-          <Route path="/admin" element={<AdminPage />} />
         </Routes>
-        <Footer/>
+       <section className="relative">
+        <div className=" bottom-0">
+          <Apps />
+          <Footer />
+        </div>
+      </section>
       </BrowserRouter>
-    </>
+    </div>
   );
 }
 

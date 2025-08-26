@@ -1,7 +1,8 @@
 export const NETWORK = import.meta.env.VITE_APP_NETWORK ?? "devnet";
 // export const MODULE_ADDRESS = import.meta.env.VITE_MODULE_ADDRESS;
 // export const MODULE_ADDRESS = "0x1d734c9c4abae4da83a98edffd8122a70bc32ea51dd80c6b30a3659d9d03d18d";
-export const MODULE_ADDRESS = "0x14c0f20c6bae72d8a9a82f833675efcf1e5c825c7bdd7dcf2fc2a69373f1f6ec";
+// export const MODULE_ADDRESS = "0x71206a7ffff43cbf3262790b2f44d75207aef685cf17730d4ea70f9742a77258";
+export const MODULE_ADDRESS = "0x237ec9a80e993f561e4cde1f4fdcd9df1aadd7a826cdcda2fce83a44cea493e5";
 export const REWARD_CREATOR_ADDRESS = import.meta.env.VITE_REWARD_CREATOR_ADDRESS;
 export const FA_ADDRESS = import.meta.env.VITE_FA_ADDRESS;
 export const IS_DEV = Boolean(import.meta.env.DEV);

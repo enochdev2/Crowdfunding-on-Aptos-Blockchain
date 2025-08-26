@@ -1,8 +1,8 @@
-import { APTOS_API_KEY, NETWORK } from "@/constants";
+import { APTOS_API_KEY } from "@/constants";
 // import { Aptos, AptosConfig } from "@aptos-labs/ts-sdk";
-import {  Aptos, AptosConfig, Network, NetworkToNetworkName } from "@aptos-labs/ts-sdk";
+import { Aptos, AptosConfig, Network, NetworkToNetworkName } from "@aptos-labs/ts-sdk";
 
-const APTOS_NETWORK: Network = NetworkToNetworkName[ Network.DEVNET];
+const APTOS_NETWORK: Network = NetworkToNetworkName[ Network.TESTNET];
 
 // const config = new AptosConfig({ network: APTOS_NETWORK });
   // const aptos = new Aptos(config);

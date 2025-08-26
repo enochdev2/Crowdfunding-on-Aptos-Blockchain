@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-tr from-rosewine via-fuchsia to-indigoDark text-white py-12 ">
+    <footer className="bg-gradient-to-tr from-rosewine via-fuchsia to-indigoDark text-white py-12 z-100 ">
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-10">
         {/* Column 1: Brand */}
         <div className="space-y-3">

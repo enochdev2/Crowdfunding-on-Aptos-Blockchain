@@ -12,7 +12,7 @@ const DonatePage = () => {
       // await donate(account, amount)
       setStatus("Donation successful!");
     } catch (err) {
-      setStatus("Error: " + err.message);
+    console.log("🚀 ~ handleDonate ~ err:", err)
     }
   };
 

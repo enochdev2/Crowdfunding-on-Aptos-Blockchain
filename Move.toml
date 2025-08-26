@@ -10,4 +10,5 @@ subdir = 'aptos-move/framework/aptos-framework'
 [addresses]
 
 crowdfundings = "0xb08f34132431b31d0312123b8149a8469bc1fcdeece5334515ead6be1c33223d"
-crowdfund = "0x6e6f335deb743dd60089844ea59b93cf476ac192bf4c56531835634646b4976f" 
+crowdfund = "0x237ec9a80e993f561e4cde1f4fdcd9df1aadd7a826cdcda2fce83a44cea493e5" 
+fa_obj_addr = "0x123"

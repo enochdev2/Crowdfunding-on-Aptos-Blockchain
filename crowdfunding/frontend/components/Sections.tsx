@@ -25,12 +25,13 @@ const Sections = () => {
   ];
 
   return (
-    <section className="relative h-screen bg-gradient-to-r from-rosewine via-fuchsia to-indigoDark text-white h-[80vh] flex items-center justify-center">
+    <section className="relative  bg-gradient-to-r from-rosewine via-fuchsia to-indigoDark text-white h-[80vh] flex items-center justify-center">
       <img
         src={logo}
         alt="Hero"
         className="absolute inset-0 w-full h-[95%] object-cover opacity-30 mix-blend-overlay"
       />
+      <div className=" absolute w-full bg-black/30 h-full"></div>
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         <h2 className=" bg-black/20 py-3 text-4xl font-extrabold text-center text-[#f3c0c0] mb-12 drop-shadow-lg">
           Why Choose <span className="text-[#7a81d8] text-shadow-sm">Raise-Fi?</span>

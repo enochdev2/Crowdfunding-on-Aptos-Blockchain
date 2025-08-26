@@ -5,7 +5,7 @@ import Percent from "@/assets/icons/percent.svg";
 export const config: Config = {
   // Removing one or all of these socials will remove them from the page
   socials: {
-    twitter: "https://twitter.com",
+    twitter: "https://x.com/Defiprinnce",
     discord: "https://discord.com",
     homepage: "#",
   },

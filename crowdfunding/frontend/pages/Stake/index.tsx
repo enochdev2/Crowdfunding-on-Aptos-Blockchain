@@ -1,15 +1,14 @@
+import CampaignList from "@/components/AllCampaign";
 import Hero from "@/components/Hero";
-import Sections from "@/components/Sections";
-import CampaignPage from "./CampaignPage";
+import IntegrationsSection from "@/components/IntegrationsSection";
 
 export const Stake: React.FC = () => {
-
   return (
-    <div style={{ overflow: "hidden" }} className="overflow-hidden">
+    <div className="overflow-x-hidden">
       <main className="flex flex-col  ">
-        <Hero/>
-        <Sections/>
-        <CampaignPage />
+        <Hero />
+        <IntegrationsSection />
+        <CampaignList />
       </main>
     </div>
   );
